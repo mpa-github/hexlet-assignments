@@ -113,11 +113,12 @@ public class UsersServlet extends HttpServlet {
         Optional<Map<String, String>> optUser;
         optUser = users.stream().filter(userMap -> userMap.get("id").equals(id)).findFirst();
         if (optUser.isEmpty()) {
-            response.sendError(404);
-        } else {
-            Map<String, String> user = optUser.get();
-            StringBuilder body = new StringBuilder();
-            body.append("""
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+        Map<String, String> user = optUser.get();
+        StringBuilder body = new StringBuilder();
+        body.append("""
             <!DOCTYPE html>
             <html lang="ru">
                 <head>
@@ -138,7 +139,7 @@ public class UsersServlet extends HttpServlet {
                                 <th>Email</th>
                             </tr>
             """);
-            body.append("""
+        body.append("""
                             <tr>
                                 <td>%s</td>
                                 <td>%s</td>
@@ -146,17 +147,16 @@ public class UsersServlet extends HttpServlet {
                                 <td>%s</td>
                             </tr>""".formatted(user.get("id"), user.get("firstName"), user.get("lastName"), user.get("email")));
 
-            body.append("""
+        body.append("""
                         </table>
                     </div>
                 </body>
             </html>
             """);
 
-            response.setContentType("text/html;charset=UTF-8");
-            PrintWriter writer = response.getWriter();
-            writer.write(body.toString());
-        }
+        response.setContentType("text/html;charset=UTF-8");
+        PrintWriter writer = response.getWriter();
+        writer.write(body.toString());
         // END
     }
 }
