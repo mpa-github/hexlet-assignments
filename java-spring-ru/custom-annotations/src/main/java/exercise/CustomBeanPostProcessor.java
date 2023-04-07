@@ -18,13 +18,7 @@ public class CustomBeanPostProcessor implements BeanPostProcessor {
 
     @Override // Выполняется перед инициализацией каждого бина.
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-        Class<?> beanClass = bean.getClass();
-        if (beanClass.isAnnotationPresent(Inspect.class)) {
-            Inspect inspectAnnotation = beanClass.getAnnotation(Inspect.class);
-            String logLevel = inspectAnnotation.level();
-        }
         return bean;
-        //return BeanPostProcessor.super.postProcessBeforeInitialization(bean, beanName);
     }
 
     @Override // Выполняется после инициализации каждого бина.
@@ -55,7 +49,6 @@ public class CustomBeanPostProcessor implements BeanPostProcessor {
             );
         }
         return bean;
-        //return BeanPostProcessor.super.postProcessAfterInitialization(bean, beanName);
     }
 }
 // END
