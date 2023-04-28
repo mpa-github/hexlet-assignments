@@ -19,7 +19,7 @@ class App {
             try {
                 return Files.readString(file1Path);
             } catch (IOException e) {
-                throw new RuntimeException(e.getClass().getName());
+                throw new RuntimeException(e);
             }
         });
 
@@ -27,18 +27,17 @@ class App {
             try {
                 return Files.readString(file2Path);
             } catch (IOException e) {
-                throw new RuntimeException(e.getClass().getName());
+                throw new RuntimeException(e);
             }
         });
 
         return readFile1.thenCombine(readFile2, (reading1, reading2) -> {
             try {
-                Files.writeString(destPath, reading1, StandardOpenOption.CREATE);
-                Files.writeString(destPath, reading2, StandardOpenOption.APPEND);
-                return reading1 + reading2;
+                String result = reading1 + reading2;
+                Files.writeString(destPath, result, StandardOpenOption.CREATE);
+                return "Done!";
             } catch (IOException e) {
-                e.printStackTrace();
-                return null;
+                throw new RuntimeException(e);
             }
         }).exceptionally(ex -> {
             System.out.println("Oops! We have an exception - " + ex.getMessage());
@@ -49,7 +48,12 @@ class App {
 
     public static void main(String[] args) throws Exception {
         // BEGIN
-        unionFiles("src/main/resources/file1.txt", "src/main/resources/file2.txt", "src/main/resources/dest.txt");
+        CompletableFuture<String> result = unionFiles(
+            "src/main/resources/file1.txt",
+            "src/main/resources/file2.txt",
+            "src/main/resources/dest.txt"
+        );
+        result.get();
         // END
     }
 }
